@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title>Dashboard</title>
+    <div th:fragment="content">
+      <h2 class="section-title">Tổng Quan</h2>
+      
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <i class="fas fa-desktop"></i>
+          <div class="stat-info">
+            <h3>Tổng Số Máy Tính</h3>
+            <p th:text="${soLuongMayTinh}">0</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <i class="fas fa-users"></i>
+          <div class="stat-info">
+            <h3>Tổng Số Tài Khoản</h3>
+            <p th:text="${soLuongTaiKhoan}">0</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <i class="fas fa-concierge-bell"></i>
+          <div class="stat-info">
+            <h3>Tổng Số Dịch Vụ</h3>
+            <p th:text="${soLuongDichVu}">0</p>
+          </div>
+        </div>
+        
+        <div class="stat-card">
+          <i class="fas fa-history"></i>
+          <div class="stat-info">
+            <h3>Phiên Đang Hoạt Động</h3>
+            <p th:text="${soPhienDangHoatDong}">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

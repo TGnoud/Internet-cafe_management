@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Sửa Dịch Vụ</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <h2>Sửa Dịch Vụ</h2>
+  <div th:if="${param.error}" class="alert alert-danger">Cập nhật thất bại! Vui lòng kiểm tra lại thông tin.</div>
+
+  <form th:action="@{/admin/pages/services/update}" th:object="${service}" method="post">
+    <input type="hidden" th:field="*{maDV}" />
+    <div class="form-group">
+      <label for="tenDV">Tên Dịch Vụ:</label>
+      <input type="text" th:field="*{tenDV}" class="form-control" id="tenDV" required/>
+    </div>
+    <div class="form-group">
+      <label for="donGia">Đơn Giá:</label>
+      <input type="number" step="1000" th:field="*{donGia}" class="form-control" id="donGia" required/>
+    </div>
+    <div class="form-group">
+      <label for="trangThaiDichVu">Trạng Thái:</label>
+      <select th:field="*{trangThaiDichVu}" class="form-control" id="trangThaiDichVu">
+        <option value="Còn hàng">Còn hàng</option>
+        <option value="Hết hàng">Hết hàng</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-success">Lưu Thay Đổi</button>
+    <a th:href="@{/admin/pages/services}" class="btn btn-secondary">Hủy</a>
+  </form>
+</div>
+</body>
+</html>

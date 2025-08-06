@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${isEditMode ? 'Sửa Nhân Viên' : 'Thêm Nhân Viên Mới'}"></title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title th:text="${isEditMode ? 'Sửa Nhân Viên' : 'Thêm Nhân Viên Mới'}"></title>
+    <content>
+      <div class="form-container">
+        <h2 th:text="${isEditMode ? 'Sửa Nhân Viên' : 'Thêm Nhân Viên Mới'}"></h2>
+        
+        <form th:action="${isEditMode ? '/admin/employees/update' : '/admin/employees/save'}" 
+              th:object="${employeeForm}" 
+              method="post" 
+              class="form">
+          
+          <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+          
+          <div class="form-group">
+            <label for="maNV">Mã Nhân Viên:</label>
+            <input type="text" 
+                   id="maNV" 
+                   th:field="*{maNV}" 
+                   th:readonly="${isEditMode}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('maNV')}" th:errors="*{maNV}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="hoTen">Họ và Tên:</label>
+            <input type="text" 
+                   id="hoTen" 
+                   th:field="*{hoTen}" 
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('hoTen')}" th:errors="*{hoTen}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="ngaySinh">Ngày Sinh:</label>
+            <input type="date" 
+                   id="ngaySinh" 
+                   name="ngaySinh"
+                   th:value="${employeeForm.ngaySinh != null ? #temporals.format(employeeForm.ngaySinh, 'yyyy-MM-dd') : ''}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('ngaySinh')}" th:errors="*{ngaySinh}"></div>
+          </div>
+
+          <!-- Debugging Ngay Sinh -->
+          <!-- End Debugging -->
+
+          <div class="form-group">
+            <label for="gioiTinh">Giới Tính:</label>
+            <select id="gioiTinh" th:field="*{gioiTinh}" required>
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('gioiTinh')}" th:errors="*{gioiTinh}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="soDienThoai">Số Điện Thoại:</label>
+            <input type="tel" 
+                   id="soDienThoai" 
+                   th:field="*{soDienThoai}" 
+                   pattern="[0-9]{10}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('soDienThoai')}" th:errors="*{soDienThoai}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="chucVu">Chức Vụ:</label>
+            <select id="chucVu" name="chucVu.maChucVu" required>
+              <option th:each="cv : ${danhSachChucVu}"
+                      th:value="${cv.maChucVu}"
+                      th:text="${cv.tenChucVu}"
+                      th:selected="${employeeForm.chucVu != null && employeeForm.chucVu.maChucVu == cv.maChucVu}">
+              </option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('chucVu.maChucVu')}" th:errors="*{chucVu.maChucVu}"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+              <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+            </button>
+            <a th:href="@{/admin/employees}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Hủy
+            </a>
+          </div>
+        </form>
+      </div>
+    </content>
+  </div>
+</body>
+</html>

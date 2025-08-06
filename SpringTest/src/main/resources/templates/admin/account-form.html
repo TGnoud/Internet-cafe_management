@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isEditMode ? 'Sửa Tài Khoản' : 'Thêm Tài Khoản Mới'}"></title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+        <title th:text="${isEditMode ? 'Sửa Tài Khoản' : 'Thêm Tài Khoản Mới'}"></title>
+        <content>
+            <div class="form-container">
+                <h2 th:text="${isEditMode ? 'Sửa Tài Khoản' : 'Thêm Tài Khoản Mới'}"></h2>
+                
+                <form th:action="${isEditMode ? '/admin/accounts/update' : '/admin/accounts/save'}" 
+                      th:object="${form}" 
+                      method="post" 
+                      class="form">
+                    
+                    <input type="hidden" th:field="*{maTK}" th:if="${isEditMode}" />
+                    
+                    <div class="form-group" th:if="${!isEditMode}">
+                        <label for="maTK">Mã Tài Khoản <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="maTK" th:field="*{maTK}" required>
+                        <div class="error" th:if="${#fields.hasErrors('maTK')}" th:errors="*{maTK}"></div>
+                    </div>
+
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                    <div class="form-group">
+                        <label for="tenTK">Tên đăng nhập <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="tenTK" th:field="*{tenTK}" required>
+                        <div class="error" th:if="${#fields.hasErrors('tenTK')}" th:errors="*{tenTK}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="matKhau">Mật khẩu <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="matKhau" th:field="*{matKhau}" th:value="${form.matKhau}" required>
+                        <div class="error" th:if="${#fields.hasErrors('matKhau')}" th:errors="*{matKhau}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hoTenKH">Họ tên khách hàng <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="hoTenKH" th:field="*{hoTenKH}" required>
+                        <div class="error" th:if="${#fields.hasErrors('hoTenKH')}" th:errors="*{hoTenKH}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="soDienThoaiKH">Số điện thoại <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="soDienThoaiKH" th:field="*{soDienThoaiKH}" required>
+                        <div class="error" th:if="${#fields.hasErrors('soDienThoaiKH')}" th:errors="*{soDienThoaiKH}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gioiTinhKH">Giới tính <span class="text-danger">*</span></label>
+                        <select class="form-control" id="gioiTinhKH" th:field="*{gioiTinhKH}" required>
+                            <option value="">Chọn giới tính</option>
+                            <option value="Nam">Nam</option>
+                            <option value="Nữ">Nữ</option>
+                            <option value="Khác">Khác</option>
+                        </select>
+                        <div class="error" th:if="${#fields.hasErrors('gioiTinhKH')}" th:errors="*{gioiTinhKH}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maLoaiKH">Loại khách hàng <span class="text-danger">*</span></label>
+                        <select class="form-control" id="maLoaiKH" th:field="*{maLoaiKH}" required>
+                            <option value="">Chọn loại khách hàng</option>
+                            <option th:each="loaiKH : ${danhSachLoaiKH}"
+                                    th:value="${loaiKH.maLoaiKH}"
+                                    th:text="${loaiKH.tenLoai}">
+                            </option>
+                        </select>
+                        <div class="error" th:if="${#fields.hasErrors('maLoaiKH')}" th:errors="*{maLoaiKH}"></div>
+                    </div>
+
+                    <div class="form-group" th:if="${isEditMode}">
+                        <label for="soTienConLai">Số tiền còn lại <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="soTienConLai" th:field="*{soTienConLai}" required min="0">
+                        <div class="error" th:if="${#fields.hasErrors('soTienConLai')}" th:errors="*{soTienConLai}"></div>
+                    </div>
+
+                    <div class="form-group" th:unless="${isEditMode}">
+                        <label for="soTienNapBanDau">Số tiền nạp ban đầu <span class="text-danger">*</span></label>
+                        <input type="number" class="form-control" id="soTienNapBanDau" th:field="*{soTienNapBanDau}" required min="0">
+                        <div class="error" th:if="${#fields.hasErrors('soTienNapBanDau')}" th:errors="*{soTienNapBanDau}"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+                            <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+                        </button>
+                        <a th:href="@{/admin/accounts}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </content>
+    </div>
+</body>
+</html>

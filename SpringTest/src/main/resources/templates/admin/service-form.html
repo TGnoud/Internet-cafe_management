@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${isEditMode ? 'Sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}"></title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title th:text="${isEditMode ? 'Sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}"></title>
+    <content>
+      <div class="form-container">
+        <h2 th:text="${isEditMode ? 'Sửa Dịch Vụ' : 'Thêm Dịch Vụ Mới'}"></h2>
+        
+        <form th:action="${isEditMode ? '/admin/services/update' : '/admin/services/save'}" 
+              th:object="${serviceForm}" 
+              method="post" 
+              class="form">
+          
+          <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+          
+          <div class="form-group">
+            <label for="maDV">Mã Dịch Vụ:</label>
+            <input type="text" 
+                   id="maDV" 
+                   th:field="*{maDV}" 
+                   th:readonly="${isEditMode}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('maDV')}" th:errors="*{maDV}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="tenDV">Tên Dịch Vụ:</label>
+            <input type="text" 
+                   id="tenDV" 
+                   th:field="*{tenDV}" 
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('tenDV')}" th:errors="*{tenDV}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="donGia">Đơn Giá (VNĐ):</label>
+            <input type="number" 
+                   id="donGia" 
+                   th:field="*{donGia}" 
+                   min="0" 
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('donGia')}" th:errors="*{donGia}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="trangThaiDichVu">Trạng Thái:</label>
+            <select id="trangThaiDichVu" th:field="*{trangThaiDichVu}" required>
+              <option value="Còn hàng">Còn hàng</option>
+              <option value="Hết hàng">Hết hàng</option>
+              <option value="Sắp có">Sắp có</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('trangThaiDichVu')}" th:errors="*{trangThaiDichVu}"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+              <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+            </button>
+            <a th:href="@{/admin/services}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Hủy
+            </a>
+          </div>
+        </form>
+      </div>
+    </content>
+  </div>
+</body>
+</html>

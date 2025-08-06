@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::mainContent})}">
+<head>
+  <title>Nạp Tiền cho Tài Khoản</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/css/admin.css" />
+  <script src="/js/admin.js"></script>
+  <style>
+    .section-title {
+      margin-bottom: 20px;
+    }
+    .styled-form {
+      max-width: 600px;
+      margin: auto;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .btn-submit, .btn-cancel {
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+<main th:fragment="mainContent">
+<h2 class="section-title">Nạp Tiền cho Tài Khoản: <span th:text="${taiKhoanInfo.tenTK}"></span></h2>
+<form th:action="@{/admin/accounts/deposit/save}" method="post" class="styled-form">
+  <input type="hidden" name="maTK" th:value="${taiKhoanInfo.maTK}" />
+  <p>Số dư hiện tại: <strong th:text="${#numbers.formatDecimal(taiKhoanInfo.soTienConLai, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></strong></p>
+  <div class="form-group">
+    <label for="soTienNap">Số Tiền Nạp:</label>
+    <input type="number" id="soTienNap" name="soTienNap" class="form-control" required min="1000" step="1000"/>
+  </div>
+  <button type="submit" class="btn-submit">Xác Nhận Nạp Tiền</button>
+  <a th:href="@{/admin/accounts}" class="btn-cancel">Quay Lại</a>
+</form>

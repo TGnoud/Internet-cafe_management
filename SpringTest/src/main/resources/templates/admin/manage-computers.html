@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản Lý Máy Tính</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title>Quản Lý Máy Tính</title>
+    <content>
+      <div class="page-header">
+        <h2 class="page-title">Quản Lý Máy Tính</h2>
+        <div class="action-bar">
+          <a th:href="@{/admin/computers/add}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm Máy Tính
+          </a>
+        </div>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Mã Máy</th>
+                  <th>Tên Máy</th>
+                  <th>Giá Theo Giờ</th>
+                  <th>Trạng Thái</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${mayTinhList == null || mayTinhList.isEmpty()}">
+                  <td colspan="5" class="text-center">Không có dữ liệu</td>
+                </tr>
+                <tr th:each="mayTinh : ${mayTinhList}">
+                  <td th:text="${mayTinh.maMay}"></td>
+                  <td th:text="${mayTinh.tenMay}"></td>
+                  <td th:text="${#numbers.formatDecimal(mayTinh.loaiMay.giaTheoGio, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                  <td>
+                    <span th:class="${mayTinh.trangThai == 'Khả dụng' ? 'status-online' : 'status-offline'}"
+                          th:text="${mayTinh.trangThai}">
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <a th:href="@{/admin/computers/edit/{maMay}(maMay=${mayTinh.maMay})}"
+                         class="btn btn-sm btn-outline-primary"
+                         title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <button class="btn btn-sm btn-outline-danger"
+                              th:data-ma-may="${mayTinh.maMay}"
+                              onclick="deleteComputer(this)"
+                              title="Xóa">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phân trang -->
+      <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}" 
+           th:href="@{/admin/computers(page=${currentPage - 1})}" 
+           class="page-link">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        
+        <!-- Hiển thị các trang gần trang hiện tại -->
+        <span th:with="start=${(currentPage - 2 < 0 ? 0 : currentPage - 2)},
+                      end=${(currentPage + 2 > totalPages - 1 ? totalPages - 1 : currentPage + 2)}">
+          <!-- Hiển thị trang đầu tiên nếu không phải là trang 0 -->
+          <a th:if="${start > 0}"
+             th:href="@{/admin/computers(page=0)}"
+             class="page-link"
+             th:text="1">
+          </a>
+          <span th:if="${start > 1}" class="page-link">...</span>
+          
+          <!-- Hiển thị các trang trong khoảng -->
+          <span th:each="i : ${#numbers.sequence(start, end)}">
+            <a th:if="${i != currentPage}"
+               th:href="@{/admin/computers(page=${i})}"
+               class="page-link"
+               th:text="${i + 1}">
+            </a>
+            <span th:if="${i == currentPage}" 
+                  class="page-link active"
+                  th:text="${i + 1}">
+            </span>
+          </span>
+          
+          <!-- Hiển thị dấu ... nếu còn nhiều trang -->
+          <span th:if="${end < totalPages - 2}" class="page-link">...</span>
+          
+          <!-- Hiển thị trang cuối cùng nếu không phải là trang cuối -->
+          <a th:if="${end < totalPages - 1}"
+             th:href="@{/admin/computers(page=${totalPages - 1})}"
+             class="page-link"
+             th:text="${totalPages}">
+          </a>
+        </span>
+        
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/admin/computers(page=${currentPage + 1})}"
+           class="page-link">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+    </content>
+  </div>
+
+  <script th:inline="javascript">
+    function deleteComputer(button) {
+      const maMay = button.dataset.maMay;
+      console.log('Attempting to delete computer with MaMay:', maMay);
+
+      if (!maMay) {
+        Swal.fire(
+          'Lỗi!',
+          'Không thể xóa máy tính vì Mã Máy tính bị thiếu.',
+          'error'
+        );
+        return;
+      }
+
+      Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: "Bạn có chắc chắn muốn xóa máy tính này?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/computers/delete/${maMay}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              Swal.fire(
+                'Đã xóa!',
+                'Máy tính đã được xóa thành công.',
+                'success'
+              ).then(() => {
+                window.location.reload();
+              });
+            } else {
+              response.text().then(errorMessage => {
+                Swal.fire(
+                  'Lỗi!',
+                  errorMessage || 'Có lỗi xảy ra khi xóa máy tính.',
+                  'error'
+                );
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            Swal.fire(
+              'Lỗi!',
+              'Có lỗi xảy ra khi xóa máy tính.',
+              'error'
+            );
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

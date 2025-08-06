@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản Lý Phiên Sử Dụng</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title>Quản Lý Phiên Sử Dụng</title>
+    <content>
+      <div class="page-header">
+        <h2 class="page-title">Quản Lý Phiên Sử Dụng</h2>
+        <div class="action-bar">
+          <a th:href="@{/admin/sessions/add}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm Phiên Mới
+          </a>
+        </div>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Mã Phiên</th>
+                  <th>Tên Máy</th>
+                  <th>Tên Tài Khoản</th>
+                  <th>Thời Gian Bắt Đầu</th>
+                  <th>Thời Gian Kết Thúc</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${phienList == null || phienList.isEmpty()}">
+                  <td colspan="6" class="text-center">Không có dữ liệu</td>
+                </tr>
+                <tr th:each="phien : ${phienList}">
+                  <td th:text="${phien.maPhien}"></td>
+                  <td th:text="${phien.mayTinh.tenMay}"></td>
+                  <td th:text="${phien.taiKhoan.tenTK}"></td>
+                  <td th:text="${#temporals.format(phien.thoiGianBatDau, 'dd/MM/yyyy HH:mm')}"></td>
+                  <td th:text="${phien.thoiGianKetThuc != null ? #temporals.format(phien.thoiGianKetThuc, 'dd/MM/yyyy HH:mm') : 'Đang sử dụng'}"></td>
+                  <td>
+                    <div class="btn-group">
+                      <a th:href="@{/admin/sessions/edit/{maPhien}(maPhien=${phien.maPhien})}" 
+                         class="btn btn-sm btn-outline-primary" 
+                         title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <button th:if="${phien.thoiGianKetThuc == null}"
+                              class="btn btn-sm btn-outline-warning" 
+                              th:data-ma-phien="${phien.maPhien}"
+                              onclick="endSession(this)"
+                              title="Kết thúc phiên">
+                        <i class="fas fa-stop-circle"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger" 
+                              th:data-ma-phien="${phien.maPhien}"
+                              onclick="deleteSession(this)"
+                              title="Xóa">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phân trang -->
+      <div class="pagination" th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}" 
+           th:href="@{/admin/sessions(page=${currentPage - 1})}" 
+           class="page-link">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        
+        <!-- Hiển thị các trang gần trang hiện tại -->
+        <span th:with="start=${(currentPage - 2 < 0 ? 0 : currentPage - 2)},
+                      end=${(currentPage + 2 > totalPages - 1 ? totalPages - 1 : currentPage + 2)}">
+          <!-- Hiển thị trang đầu tiên nếu không phải là trang 0 -->
+          <a th:if="${start > 0}"
+             th:href="@{/admin/sessions(page=0)}"
+             class="page-link"
+             th:text="1">
+          </a>
+          <span th:if="${start > 1}" class="page-link">...</span>
+          
+          <!-- Hiển thị các trang trong khoảng -->
+          <span th:each="i : ${#numbers.sequence(start, end)}">
+            <a th:if="${i != currentPage}"
+               th:href="@{/admin/sessions(page=${i})}"
+               class="page-link"
+               th:text="${i + 1}">
+            </a>
+            <span th:if="${i == currentPage}" 
+                  class="page-link active"
+                  th:text="${i + 1}">
+            </span>
+          </span>
+          
+          <!-- Hiển thị dấu ... nếu còn nhiều trang -->
+          <span th:if="${end < totalPages - 2}" class="page-link">...</span>
+          
+          <!-- Hiển thị trang cuối cùng nếu không phải là trang cuối -->
+          <a th:if="${end < totalPages - 1}"
+             th:href="@{/admin/sessions(page=${totalPages - 1})}"
+             class="page-link"
+             th:text="${totalPages}">
+          </a>
+        </span>
+        
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/admin/sessions(page=${currentPage + 1})}"
+           class="page-link">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+    </content>
+  </div>
+
+  <script th:inline="javascript">
+    function endSession(button) {
+      const maPhien = button.dataset.maPhien;
+      Swal.fire({
+        title: 'Xác nhận kết thúc?',
+        text: "Bạn có chắc chắn muốn kết thúc phiên sử dụng này?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Kết thúc',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/sessions/${maPhien}/end`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              Swal.fire({
+                title: 'Đã kết thúc!',
+                text: 'Phiên sử dụng đã được kết thúc.',
+                icon: 'success'
+              }).then(() => {
+                window.location.reload();
+              });
+            } else {
+              response.text().then(errorMessage => {
+                Swal.fire({
+                  title: 'Lỗi!',
+                  text: errorMessage || 'Có lỗi xảy ra khi kết thúc phiên sử dụng.',
+                  icon: 'error'
+                });
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+              title: 'Lỗi!',
+              text: 'Có lỗi xảy ra khi kết thúc phiên sử dụng.',
+              icon: 'error'
+            });
+          });
+        }
+      });
+    }
+
+    function deleteSession(button) {
+      const maPhien = button.dataset.maPhien;
+      Swal.fire({
+        title: 'Xác nhận xóa?',
+        text: "Bạn có chắc chắn muốn xóa phiên sử dụng này?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          fetch(`/admin/sessions/${maPhien}`, {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+          .then(response => {
+            if (response.ok) {
+              Swal.fire(
+                'Đã xóa!',
+                'Phiên sử dụng đã được xóa thành công.',
+                'success'
+              ).then(() => {
+                window.location.reload();
+              });
+            } else {
+              response.text().then(errorMessage => {
+                Swal.fire(
+                  'Lỗi!',
+                  errorMessage || 'Có lỗi xảy ra khi xóa phiên sử dụng.',
+                  'error'
+                );
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            Swal.fire(
+              'Lỗi!',
+              'Có lỗi xảy ra khi xóa phiên sử dụng.',
+              'error'
+            );
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>

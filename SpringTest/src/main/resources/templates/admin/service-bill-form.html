@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isEditMode ? 'Sửa Hóa Đơn Dịch Vụ' : 'Thêm Hóa Đơn Dịch Vụ Mới'}"></title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+        <title th:text="${isEditMode ? 'Sửa Hóa Đơn Dịch Vụ' : 'Thêm Hóa Đơn Dịch Vụ Mới'}"></title>
+        <content>
+            <div class="form-container">
+                <h2 th:text="${isEditMode ? 'Sửa Hóa Đơn Dịch Vụ' : 'Thêm Hóa Đơn Dịch Vụ Mới'}"></h2>
+                
+                <form th:action="${isEditMode ? '/admin/service-bills/update' : '/admin/service-bills/save'}" 
+                      method="post" 
+                      class="form">
+                  
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+                    
+                    <div class="form-group" th:if="${isEditMode}">
+                        <label for="maHD">Mã Hóa Đơn</label>
+                        <input type="text" class="form-control" id="maHD" name="maHD" 
+                               th:value="${serviceBillForm.maHD}"
+                               readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tenTK">Tên Tài Khoản</label>
+                        <input type="text" class="form-control" id="tenTK" name="tenTK" 
+                               th:value="${serviceBillForm.tenTK}"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maDV">Dịch Vụ:</label>
+                        <select id="maDV" name="maDV" required onchange="calculateTotal()">
+                            <option th:each="dv : ${danhSachDichVu}"
+                                    th:value="${dv.maDV}"
+                                    th:text="${dv.tenDV}"
+                                    th:data-price="${dv.donGia}"
+                                    th:selected="${serviceBillForm.chiTiet != null && !serviceBillForm.chiTiet.isEmpty() && serviceBillForm.chiTiet[0].maDV == dv.maDV}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="soLuong">Số Lượng:</label>
+                        <input type="number" 
+                               id="soLuong" 
+                               name="soLuong"
+                               th:value="${serviceBillForm.chiTiet != null && !serviceBillForm.chiTiet.isEmpty() ? serviceBillForm.chiTiet[0].soLuong : ''}"
+                               min="1"
+                               onchange="calculateTotal()"
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="maUuDai">Ưu Đãi:</label>
+                        <select id="maUuDai" name="maUuDai" onchange="calculateTotal()">
+                            <option value="">-- Chọn ưu đãi --</option>
+                            <option th:each="ud : ${danhSachUuDai}"
+                                    th:value="${ud.maUuDai}"
+                                    th:text="${ud.noiDung}"
+                                    th:data-discount="${ud.mucUuDai}"
+                                    th:selected="${serviceBillForm.maUuDai == ud.maUuDai}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Thành Tiền:</label>
+                        <div id="totalAmount" class="form-control" style="background-color: #f8f9fa;">
+                            <span id="originalAmount">0</span> VNĐ
+                            <span id="discountInfo" style="display: none;">
+                                (Giảm <span id="discountAmount">0</span> VNĐ)
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+                            <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+                        </button>
+                        <a th:href="@{/admin/service-bills}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </content>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function calculateTotal() {
+            const selectedService = document.getElementById('maDV').options[document.getElementById('maDV').selectedIndex];
+            const quantity = parseInt(document.getElementById('soLuong').value) || 0;
+            const selectedDiscount = document.getElementById('maUuDai').options[document.getElementById('maUuDai').selectedIndex];
+            
+            const price = parseFloat(selectedService.dataset.price) || 0;
+            const discount = parseFloat(selectedDiscount.dataset.discount) || 0;
+            
+            const originalAmount = price * quantity;
+            const discountAmount = originalAmount * (discount / 100);
+            const finalAmount = originalAmount - discountAmount;
+            
+            document.getElementById('originalAmount').textContent = formatNumber(finalAmount);
+            
+            if (discount > 0) {
+                document.getElementById('discountInfo').style.display = 'inline';
+                document.getElementById('discountAmount').textContent = formatNumber(discountAmount);
+            } else {
+                document.getElementById('discountInfo').style.display = 'none';
+            }
+        }
+
+        function formatNumber(number) {
+            return new Intl.NumberFormat('vi-VN').format(Math.round(number));
+        }
+
+        // Tính toán ban đầu khi trang được tải
+        document.addEventListener('DOMContentLoaded', calculateTotal);
+    </script>
+</body>
+</html> 

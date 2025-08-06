@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${isEditMode ? 'Sửa Phiên Sử Dụng' : 'Thêm Phiên Sử Dụng Mới'}"></title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title th:text="${isEditMode ? 'Sửa Phiên Sử Dụng' : 'Thêm Phiên Sử Dụng Mới'}"></title>
+    <content>
+      <div class="form-container">
+        <h2 th:text="${isEditMode ? 'Sửa Phiên Sử Dụng' : 'Thêm Phiên Sử Dụng Mới'}"></h2>
+        
+        <form th:action="${isEditMode ? '/admin/sessions/update' : '/admin/sessions/save'}" 
+              th:object="${sessionForm}" 
+              method="post" 
+              class="form">
+          
+          <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+          
+          <div class="form-group" th:if="${isEditMode}">
+            <label for="maPhien">Mã Phiên</label>
+            <input type="number" class="form-control" id="maPhien" name="maPhien" 
+                   th:value="${sessionForm.maPhien}"
+                   readonly>
+          </div>
+
+          <div class="form-group">
+            <label for="mayTinh">Máy Tính:</label>
+            <select id="mayTinh" name="mayTinh.maMay" required>
+              <option th:each="may : ${availableComputers}"
+                      th:value="${may.maMay}"
+                      th:text="${may.tenMay}"
+                      th:selected="${sessionForm.mayTinh != null && sessionForm.mayTinh.maMay == may.maMay}">
+              </option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('mayTinh.maMay')}" th:errors="*{mayTinh.maMay}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="tenTK">Tên Tài Khoản</label>
+            <input type="text" class="form-control" id="tenTK" name="tenTK" 
+                   th:value="${sessionForm.taiKhoan != null ? sessionForm.taiKhoan.tenTK : ''}"
+                   required>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('taiKhoan.tenTK')}" 
+                 th:errors="*{taiKhoan.tenTK}">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="thoiGianBatDau">Thời Gian Bắt Đầu:</label>
+            <input type="datetime-local" 
+                   id="thoiGianBatDau" 
+                   name="thoiGianBatDau"
+                   th:value="${sessionForm.thoiGianBatDau != null ? #temporals.format(sessionForm.thoiGianBatDau, 'yyyy-MM-dd''T''HH:mm') : ''}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('thoiGianBatDau')}" th:errors="*{thoiGianBatDau}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="thoiGianKetThuc">Thời Gian Kết Thúc:</label>
+            <input type="datetime-local" 
+                   id="thoiGianKetThuc" 
+                   name="thoiGianKetThuc"
+                   th:value="${sessionForm.thoiGianKetThuc != null ? #temporals.format(sessionForm.thoiGianKetThuc, 'yyyy-MM-dd''T''HH:mm') : ''}">
+            <div class="error" th:if="${#fields.hasErrors('thoiGianKetThuc')}" th:errors="*{thoiGianKetThuc}"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+              <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+            </button>
+            <a th:href="@{/admin/sessions}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Hủy
+            </a>
+          </div>
+        </form>
+      </div>
+    </content>
+  </div>
+</body>
+</html> 

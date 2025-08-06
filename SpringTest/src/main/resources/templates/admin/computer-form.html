@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${isEditMode ? 'Sửa Máy Tính' : 'Thêm Máy Tính Mới'}"></title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+        <title th:text="${isEditMode ? 'Sửa Máy Tính' : 'Thêm Máy Tính Mới'}"></title>
+        <content>
+            <div class="form-container">
+                <h2 th:text="${isEditMode ? 'Sửa Máy Tính' : 'Thêm Máy Tính Mới'}"></h2>
+
+                <form th:action="${isEditMode ? '/admin/computers/update' : '/admin/computers/save'}"
+                      th:object="${computerForm}"
+                      method="post"
+                      class="form">
+
+                    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+                    <div class="form-group">
+                        <label for="maMay">Mã Máy:</label>
+                        <input type="text"
+                               id="maMay"
+                               th:field="*{maMay}"
+                               th:readonly="${isEditMode}"
+                               required>
+                        <div class="error" th:if="${#fields.hasErrors('maMay')}" th:errors="*{maMay}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tenMay">Tên Máy:</label>
+                        <input type="text"
+                               id="tenMay"
+                               th:field="*{tenMay}"
+                               required>
+                        <div class="error" th:if="${#fields.hasErrors('tenMay')}" th:errors="*{tenMay}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="trangThai">Trạng Thái:</label>
+                        <select id="trangThai" th:field="*{trangThai}" required>
+                            <option value="Khả dụng">Khả dụng</option>
+                            <option value="Bảo trì">Bảo trì</option>
+                        </select>
+                        <div class="error" th:if="${#fields.hasErrors('trangThai')}" th:errors="*{trangThai}"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="loaiMay">Loại Máy:</label>
+                        <select id="loaiMay" th:field="*{loaiMay.maLoaiMay}" required>
+                            <option th:each="lm : ${danhSachLoaiMay}"
+                                    th:value="${lm.maLoaiMay}"
+                                    th:text="${lm.moTa} + ' (' + ${#numbers.formatDecimal(lm.giaTheoGio, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/giờ)'"
+                                    th:selected="${computerForm.loaiMay != null && computerForm.loaiMay.maLoaiMay == lm.maLoaiMay}">
+                            </option>
+                        </select>
+                        <div class="error" th:if="${#fields.hasErrors('loaiMay.maLoaiMay')}" th:errors="*{loaiMay.maLoaiMay}"></div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+                            <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+                        </button>
+                        <a th:href="@{/admin/computers}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </content>
+    </div>
+</body>
+</html> 

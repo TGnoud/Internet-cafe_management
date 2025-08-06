@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${isEditMode ? 'Sửa Ưu Đãi' : 'Thêm Ưu Đãi Mới'}"></title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title th:text="${isEditMode ? 'Sửa Ưu Đãi' : 'Thêm Ưu Đãi Mới'}"></title>
+    <content>
+      <div class="form-container">
+        <h2 th:text="${isEditMode ? 'Sửa Ưu Đãi' : 'Thêm Ưu Đãi Mới'}"></h2>
+        
+        <form th:action="${isEditMode ? '/admin/promotions/update' : '/admin/promotions/save'}" 
+              th:object="${promotionForm}" 
+              method="post" 
+              class="form">
+          
+          <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+          
+          <div class="form-group">
+            <label for="maUuDaiInput">Mã Ưu Đãi:</label>
+            <input type="text" 
+                   id="maUuDaiInput" 
+                   th:field="*{maUuDai}" 
+                   th:readonly="${isEditMode}"
+                   required>
+            <div class="error" th:if="${#fields.hasErrors('maUuDai')}" th:errors="*{maUuDai}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="noiDung">Nội Dung/Tên Chương Trình:</label>
+            <textarea id="noiDung" 
+                      th:field="*{noiDung}" 
+                      class="form-control" 
+                      rows="3" 
+                      required></textarea>
+            <div class="error" th:if="${#fields.hasErrors('noiDung')}" th:errors="*{noiDung}"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="mucUuDai">Mức Ưu Đãi (%):</label>
+            <input type="number" 
+                   id="mucUuDai" 
+                   th:field="*{mucUuDai}" 
+                   step="0.01" 
+                   min="0" 
+                   max="100" 
+                   required>
+            <small class="form-text">Ví dụ: Nhập 10 cho 10%</small>
+            <div class="error" th:if="${#fields.hasErrors('mucUuDai')}" th:errors="*{mucUuDai}"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas" th:classappend="${isEditMode ? 'fa-save' : 'fa-plus'}"></i>
+              <span th:text="${isEditMode ? 'Cập nhật' : 'Thêm mới'}"></span>
+            </button>
+            <a th:href="@{/admin/promotions}" class="btn btn-secondary">
+              <i class="fas fa-times"></i> Hủy
+            </a>
+          </div>
+        </form>
+      </div>
+    </content>
+  </div>
+</body>
+</html>

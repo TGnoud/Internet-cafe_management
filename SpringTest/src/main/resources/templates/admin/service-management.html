@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản Lý Dịch Vụ</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+  <h2>Quản Lý Dịch Vụ</h2>
+
+  <div th:if="${param.success}" class="alert alert-success">Thao tác thành công!</div>
+  <div th:if="${param.error}" class="alert alert-danger">Có lỗi xảy ra! Vui lòng kiểm tra lại thông tin.</div>
+
+  <h4>Thêm Dịch Vụ Mới</h4>
+  <form th:action="@{/admin/pages/services/add}" th:object="${newService}" method="post" class="mb-4">
+    <div class="form-group">
+      <label for="maDV">Mã Dịch Vụ:</label>
+      <input type="text" th:field="*{maDV}" class="form-control" id="maDV" required/>
+    </div>
+    <div class="form-group">
+      <label for="tenDV">Tên Dịch Vụ:</label>
+      <input type="text" th:field="*{tenDV}" class="form-control" id="tenDV" required/>
+    </div>
+    <div class="form-group">
+      <label for="donGia">Đơn Giá:</label>
+      <input type="number" step="1000" th:field="*{donGia}" class="form-control" id="donGia" required/>
+    </div>
+    <div class="form-group">
+      <label for="trangThaiDichVu">Trạng Thái:</label>
+      <select th:field="*{trangThaiDichVu}" class="form-control" id="trangThaiDichVu">
+        <option value="Còn hàng">Còn hàng</option>
+        <option value="Hết hàng">Hết hàng</option>
+        <option value="Sắp có">Sắp có</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Thêm Dịch Vụ</button>
+  </form>
+  <hr/>
+  <h4>Danh Sách Dịch Vụ</h4>
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Mã DV</th>
+      <th>Tên DV</th>
+      <th>Đơn Giá</th>
+      <th>Trạng Thái</th>
+      <th>Hành động</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="service : ${services}">
+      <td th:text="${service.maDV}"></td>
+      <td th:text="${service.tenDV}"></td>
+      <td th:text="${#numbers.formatDecimal(service.donGia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+      <td th:text="${service.trangThaiDichVu}"></td>
+      <td>
+        <a th:href="@{/admin/pages/services/edit/{maDV}(maDV=${service.maDV})}" class="btn btn-sm btn-warning">Sửa</a>
+        <button th:onclick="'deleteService(\'' + ${service.maDV} + '\')'" class="btn btn-sm btn-danger">Xóa</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<script>
+  async function deleteService(maDV) {
+      if (confirm('Bạn có chắc chắn muốn xóa dịch vụ ' + maDV + '?')) {
+          try {
+              const response = await fetch(`/api/employee/services/${maDV}`, { // Gọi REST API đã tạo
+                  method: 'DELETE',
+                  headers: { /* Authorization nếu cần */ }
+              });
+              if (response.ok) {
+                  alert('Xóa dịch vụ thành công!');
+                  window.location.reload();
+              } else {
+                  const errorData = await response.json();
+                  alert('Lỗi khi xóa dịch vụ: ' + (errorData.message || response.statusText));
+              }
+          } catch (error) {
+              alert('Đã xảy ra lỗi: ' + error);
+          }
+      }
+  }
+</script>
+</body>
+</html>

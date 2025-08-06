@@ -1,0 +1,427 @@
+/* =================================================================
+   1. VARIABLES & GLOBAL STYLES
+   - Định nghĩa màu sắc, font chữ và các style cơ bản.
+   - Bạn có thể dễ dàng thay đổi màu sắc của toàn bộ trang web tại đây.
+   ================================================================= */
+:root {
+    --primary-color: #4A6CF7;      /* Màu xanh dương chính, dùng cho nút bấm, link */
+    --primary-color-dark: #3758e0; /* Màu chính khi hover */
+    --secondary-color: #637381;    /* Màu chữ phụ, icon */
+    --success-color: #28a745;      /* Màu cho hành động thành công */
+    --danger-color: #dc3545;       /* Màu cho hành động nguy hiểm (xóa) */
+    --warning-color: #ffc107;      /* Màu cho cảnh báo (sửa) */
+
+    --background-light: #F4F7FA;   /* Màu nền chính của trang */
+    --background-panel: #FFFFFF;   /* Màu nền của card, table, panel */
+    --border-color: #E2E8F0;       /* Màu viền */
+
+    --text-dark: #212B36;          /* Màu chữ chính */
+    --text-light: #FFFFFF;         /* Màu chữ trên nền tối/màu */
+
+    --font-family: 'Inter', sans-serif;
+    --border-radius: 8px;          /* Bo góc cho các component */
+    --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: var(--background-light);
+    color: var(--text-dark);
+}
+
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--primary-color-dark);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+/* =================================================================
+   2. LAYOUT
+   - Wrapper, Header, Sidebar, Main Content
+   ================================================================= */
+.wrapper {
+    display: flex;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: var(--background-panel);
+    border-right: 1px solid var(--border-color);
+    min-height: 100vh;
+    padding: 20px;
+    transition: width 0.3s ease;
+}
+
+.sidebar .sidebar-header {
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.sidebar-nav {
+    list-style: none;
+}
+
+.sidebar-nav li a {
+    display: block;
+    padding: 12px 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 5px;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li a.active {
+    background-color: var(--primary-color);
+    color: var(--text-light);
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-x: auto;
+}
+
+.header {
+    background-color: var(--background-panel);
+    padding: 15px 30px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* =================================================================
+   3. COMPONENTS
+   - Buttons, Forms, Tables, Cards, Modals, Pagination
+   ================================================================= */
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    color: var(--text-light);
+    background-color: var(--primary-color);
+}
+.btn-primary:hover {
+    background-color: var(--primary-color-dark);
+}
+
+.btn-danger {
+    color: var(--text-light);
+    background-color: var(--danger-color);
+}
+
+.btn-warning {
+    color: var(--text-dark);
+    background-color: var(--warning-color);
+}
+
+.btn-secondary {
+    color: var(--text-dark);
+    background-color: #E2E8F0;
+    border-color: #E2E8F0;
+}
+.btn-secondary:hover {
+    background-color: #d4dbe3;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-dark);
+    background-color: var(--background-panel);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.form-control:focus {
+    color: var(--text-dark);
+    background-color: var(--background-panel);
+    border-color: var(--primary-color);
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(74, 108, 247, 0.25);
+}
+
+label {
+    display: inline-block;
+    margin-bottom: .5rem;
+    font-weight: 500;
+}
+
+/* --- Tables --- */
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    background-color: var(--background-panel);
+    border-collapse: collapse;
+    border-radius: var(--border-radius);
+    overflow: hidden; /* Giúp bo góc cho table */
+    box-shadow: var(--box-shadow);
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
+    vertical-align: middle;
+    border-top: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.table thead th {
+    vertical-align: bottom;
+    border-bottom: 2px solid var(--border-color);
+    background-color: var(--background-light);
+    font-weight: 600;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(74, 108, 247, 0.05); /* Màu xanh dương rất nhạt */
+}
+
+/* --- Cards (for Dashboard) --- */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background-color: var(--background-panel);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    font-size: 1rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.card .value {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-top: 10px;
+}
+
+/* --- Modals (for Forms & Confirmations) --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none; /* Hiển thị bằng JS */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: var(--background-panel);
+    padding: 30px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.modal-header .close-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--secondary-color);
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+
+/* --- Pagination --- */
+.pagination {
+    display: flex;
+    list-style: none;
+    padding-left: 0;
+    border-radius: var(--border-radius);
+}
+
+.page-item .page-link {
+    position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: var(--primary-color);
+    background-color: var(--background-panel);
+    border: 1px solid var(--border-color);
+}
+.page-item.active .page-link {
+    z-index: 1;
+    color: var(--text-light);
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.page-item.disabled .page-link {
+    color: var(--secondary-color);
+    pointer-events: none;
+    cursor: auto;
+    background-color: var(--background-panel);
+    border-color: var(--border-color);
+}
+.page-item:first-child .page-link {
+    border-top-left-radius: var(--border-radius);
+    border-bottom-left-radius: var(--border-radius);
+}
+.page-item:last-child .page-link {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+
+/* =================================================================
+   4. LOGIN PAGE
+   ================================================================= */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: var(--background-light);
+}
+
+.login-form {
+    background: var(--background-panel);
+    padding: 40px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    width: 100%;
+    max-width: 420px;
+}
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+
+/* =================================================================
+   5. RESPONSIVE DESIGN
+   ================================================================= */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px; /* Thu nhỏ sidebar */
+        overflow: hidden;
+    }
+    .sidebar .sidebar-header {
+        font-size: 1.2rem;
+        /* Có thể thay bằng logo icon */
+    }
+    .sidebar-nav li a {
+        text-align: center;
+        padding: 15px 0;
+    }
+    .sidebar-nav li a .nav-text {
+        display: none; /* Ẩn chữ, chỉ hiện icon nếu có */
+    }
+}
+
+@media (max-width: 768px) {
+    .wrapper {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        min-height: auto;
+        display: flex;
+        justify-content: center;
+        padding: 10px;
+    }
+     .sidebar .sidebar-header {
+        display: none;
+    }
+    .sidebar-nav {
+        display: flex;
+        gap: 10px;
+    }
+     .sidebar-nav li a {
+        padding: 8px 12px;
+    }
+    .main-content {
+        padding: 20px;
+    }
+    .header {
+        padding: 15px 20px;
+    }
+}

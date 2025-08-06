@@ -1,0 +1,30 @@
+ -- Dữ liệu cho bảng MayTinh (Ví dụ 50 máy)
+INSERT INTO `MayTinh` (`MaMay`, `TenMay`, `TrangThai`, `MaLoaiMay`) VALUES
+('PC01', 'Máy 01', 'Khả dụng', 'LMAY01'), ('PC02', 'Máy 02', 'Khả dụng', 'LMAY01'),
+('PC03', 'Máy 03', 'Khả dụng', 'LMAY01'), ('PC04', 'Máy 04', 'Khả dụng', 'LMAY01'),
+('PC05', 'Máy 05', 'Khả dụng', 'LMAY01'), ('PC06', 'Máy 06', 'Khả dụng', 'LMAY01'),
+('PC07', 'Máy 07', 'Khả dụng', 'LMAY01'), 
+('PC08', 'Máy 08', 'Khả dụng', 'LMAY01'),
+('PC09', 'Máy 09', 'Khả dụng', 'LMAY01'), ('PC10', 'Máy 10', 'Khả dụng', 'LMAY01'), -- 10 máy loại 1
+('PC11', 'Máy 11', 'Khả dụng', 'LMAY02'), ('PC12', 'Máy 12', 'Khả dụng', 'LMAY02'),
+('PC13', 'Máy 13', 'Khả dụng', 'LMAY02'), ('PC14', 'Máy 14', 'Khả dụng', 'LMAY02'),
+('PC15', 'Máy 15', 'Khả dụng', 'LMAY02'), ('PC16', 'Máy 16', 'Khả dụng', 'LMAY02'),
+('PC17', 'Máy 17', 'Khả dụng', 'LMAY02'), ('PC18', 'Máy 18', 'Khả dụng', 'LMAY02'),
+('PC19', 'Máy 19', 'Khả dụng', 'LMAY02'), ('PC20', 'Máy 20', 'Khả dụng', 'LMAY02'),
+('PC21', 'Máy 21', 'Khả dụng', 'LMAY02'), ('PC22', 'Máy 22', 'Khả dụng', 'LMAY02'),
+('PC23', 'Máy 23', 'Khả dụng', 'LMAY02'), ('PC24', 'Máy 24', 'Khả dụng', 'LMAY02'),
+('PC25', 'Máy 25', 'Khả dụng', 'LMAY02'), ('PC26', 'Máy 26', 'Khả dụng', 'LMAY02'),
+('PC27', 'Máy 27', 'Khả dụng', 'LMAY02'),
+('PC28', 'Máy 28', 'Khả dụng', 'LMAY02'),
+('PC29', 'Máy 29', 'Khả dụng', 'LMAY02'), ('PC30', 'Máy 30', 'Khả dụng', 'LMAY02'), -- 20 máy loại 2
+('PC31', 'Máy 31', 'Khả dụng', 'LMAY03'), ('PC32', 'Máy 32', 'Khả dụng', 'LMAY03'),
+('PC33', 'Máy 33', 'Khả dụng', 'LMAY03'), ('PC34', 'Máy 34', 'Khả dụng', 'LMAY03'),
+('PC35', 'Máy 35', 'Khả dụng', 'LMAY03'), ('PC36', 'Máy 36', 'Khả dụng', 'LMAY03'),
+('PC37', 'Máy 37', 'Khả dụng', 'LMAY03'), ('PC38', 'Máy 38', 'Khả dụng', 'LMAY03'),
+('PC39', 'Máy 39', 'Khả dụng', 'LMAY03'), ('PC40', 'Máy 40', 'Khả dụng', 'LMAY03'),
+('PC41', 'Máy 41', 'Khả dụng', 'LMAY03'),
+('PC42', 'Máy 42', 'Khả dụng', 'LMAY03'), 
+('PC43', 'Máy 43', 'Khả dụng', 'LMAY03'), ('PC44', 'Máy 44', 'Khả dụng', 'LMAY03'),
+('PC45', 'Máy 45', 'Khả dụng', 'LMAY03'), ('PC46', 'Máy 46', 'Khả dụng', 'LMAY03'),
+('PC47', 'Máy 47', 'Khả dụng', 'LMAY03'), ('PC48', 'Máy 48', 'Khả dụng', 'LMAY03'),
+('PC49', 'Máy 49', 'Khả dụng', 'LMAY03'), ('PC50', 'Máy 50', 'Khả dụng', 'LMAY03'); -- 20 máy loại 3

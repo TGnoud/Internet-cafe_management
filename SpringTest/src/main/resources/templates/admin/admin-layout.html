@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:replace="${title}">Admin Layout</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background-color: #f4f7f6; display: flex; flex-direction: column; min-height: 100vh; }
+    .admin-header { background-color: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .admin-header h1 { margin: 0; font-size: 1.8em; }
+    .admin-nav ul { list-style-type: none; margin: 0; padding: 0; display: flex; }
+    .admin-nav li a { color: white; text-decoration: none; padding: 10px 15px; display: block; }
+    .admin-nav li a:hover, .admin-nav li a.active { background-color: #34495e; }
+    .admin-main-container { flex-grow: 1; display: flex; }
+    .sidebar { width: 220px; background-color: #34495e; color: #ecf0f1; padding-top: 20px; }
+    .sidebar ul { list-style-type: none; padding: 0; margin: 0; }
+    .sidebar li a { color: #ecf0f1; text-decoration: none; padding: 12px 20px; display: block; border-bottom: 1px solid #4a627a; }
+    .sidebar li a:hover, .sidebar li a.active { background-color: #4a627a; }
+    .admin-content { flex-grow: 1; padding: 20px; background-color: #fff; margin: 15px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.05); }
+    .section-title { color: #2c3e50; border-bottom: 2px solid #bdc3c7; padding-bottom: 10px; margin-top: 0; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; background-color: white; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+    th { background-color: #f8f9fa; color: #34495e; font-weight: 600; }
+    tr:hover { background-color: #f1f5f7; }
+    .action-buttons a, .action-buttons button { margin-right: 5px; padding: 6px 12px; text-decoration: none; border-radius: 4px; font-size: 0.9em; }
+    .btn-edit { background-color: #3498db; color: white; border:none; } .btn-edit:hover { background-color: #2980b9; }
+    .btn-delete { background-color: #e74c3c; color: white; border:none; cursor:pointer; } .btn-delete:hover { background-color: #c0392b; }
+    .btn-add { background-color: #2ecc71; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; display: inline-block; margin-bottom: 20px;} .btn-add:hover { background-color: #27ae60; }
+    /* Nút Đăng xuất */
+    .logout-button { background-color: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+    .logout-button:hover { background-color: #c0392b; }
+  </style>
+</head>
+<body>
+  <div th:fragment="layout(title, content)">
+<header class="admin-header">
+      <div class="header-content">
+        <a href="/admin/dashboard" class="logo">
+          <i class="fas fa-laptop"></i> Internet Cafe
+        </a>
+        <nav>
+          <ul class="nav-menu">
+            <li class="nav-item">
+              <a th:href="@{/admin/dashboard}" class="nav-link" th:classappend="${activePage == 'dashboard'} ? 'active'">
+                <i class="fas fa-chart-line"></i> Tổng Quan
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/computers}" class="nav-link" th:classappend="${activePage == 'computers'} ? 'active'">
+                <i class="fas fa-desktop"></i> Quản Lý Máy Tính
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/services}" class="nav-link" th:classappend="${activePage == 'services'} ? 'active'">
+                <i class="fas fa-concierge-bell"></i> Quản Lý Dịch Vụ
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/service-bills}" class="nav-link" th:classappend="${activePage == 'service-bills'} ? 'active'">
+                <i class="fas fa-file-invoice"></i> Quản Lý Hóa Đơn
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/accounts}" class="nav-link" th:classappend="${activePage == 'accounts'} ? 'active'">
+                <i class="fas fa-users"></i> Quản Lý Tài Khoản
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/sessions}" class="nav-link" th:classappend="${activePage == 'sessions'} ? 'active'">
+                <i class="fas fa-clock"></i> Phiên Sử Dụng
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/employees}" class="nav-link" th:classappend="${activePage == 'employees'} ? 'active'">
+                <i class="fas fa-user-tie"></i> Quản Lý Nhân Viên
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/admin/promotions}" class="nav-link" th:classappend="${activePage == 'promotions'} ? 'active'">
+                <i class="fas fa-gift"></i> Quản Lý Ưu Đãi
+              </a>
+            </li>
+            <li class="nav-item">
+              <a th:href="@{/logout}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Đăng Xuất
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+</header>
+
+    <main class="main-content">
+      <div th:replace="${content}">
+        <!-- Content will be inserted here -->
+    </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Quản Lý Hóa Đơn Dịch Vụ</title>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div th:replace="~{admin/admin-layout :: layout(~{::title}, ~{::content})}">
+    <title>Quản Lý Hóa Đơn Dịch Vụ</title>
+    <content>
+      <div class="page-header">
+        <h2 class="page-title">Quản Lý Hóa Đơn Dịch Vụ</h2>
+        <div class="action-bar">
+          <a th:href="@{/admin/service-bills/add}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Thêm Hóa Đơn
+          </a>
+        </div>
+      </div>
+
+      <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+      <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
+      <div class="card">
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Mã Hóa Đơn</th>
+                  <th>Tên Tài Khoản</th>
+                  <th>Tên Dịch Vụ</th>
+                  <th>Đơn Giá</th>
+                  <th>Số Lượng</th>
+                  <th>Nội Dung Ưu Đãi</th>
+                  <th>Thành Tiền</th>
+                  <th>Thời Điểm Thanh Toán</th>
+                  <th>Thao Tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:if="${serviceBillPage.content == null || serviceBillPage.content.isEmpty()}">
+                  <td colspan="9" class="text-center">Không có dữ liệu</td>
+                </tr>
+                <tr th:each="bill : ${serviceBillPage.content}">
+                  <td th:text="${bill.maHD}"></td>
+                  <td th:text="${bill.tenTK}" class="text-nowrap"></td>
+                  <td th:text="${bill.tenDichVu}" class="text-nowrap"></td>
+                  <td th:text="${#numbers.formatDecimal(bill.donGia, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></td>
+                  <td th:text="${bill.soLuong}"></td>
+                  <td>
+                    <span th:if="${bill.maUuDai != null}" class="text-nowrap" th:text="${bill.noiDungUuDai}"></span>
+                    <span th:unless="${bill.maUuDai != null}" class="text-muted">Không có</span>
+                  </td>
+                  <td>
+                    <div class="total-amount">
+                      <span th:text="${#numbers.formatDecimal(bill.thanhTien - (bill.thanhTien * bill.mucUuDai / 100), 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
+                    </div>
+                  </td>
+                  <td th:text="${#temporals.format(bill.thoiDiemThanhToan, 'dd/MM/yyyy HH:mm')}"></td>
+                  <td>
+                    <div class="btn-group">
+                      <a th:href="@{/admin/service-bills/edit/{maHD}(maHD=${bill.maHD})}" 
+                         class="btn btn-sm btn-outline-primary" 
+                         title="Chỉnh sửa">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Phân trang -->
+      <div class="pagination" th:if="${serviceBillPage.totalPages > 1}">
+        <a th:if="${serviceBillPage.number > 0}" 
+           th:href="@{/admin/service-bills(page=${serviceBillPage.number - 1})}" 
+           class="page-link">
+          <i class="fas fa-chevron-left"></i>
+        </a>
+        
+        <!-- Hiển thị các trang gần trang hiện tại -->
+        <span th:with="start=${(serviceBillPage.number - 2 < 0 ? 0 : serviceBillPage.number - 2)},
+                      end=${(serviceBillPage.number + 2 > serviceBillPage.totalPages - 1 ? serviceBillPage.totalPages - 1 : serviceBillPage.number + 2)}">
+          <!-- Hiển thị trang đầu tiên nếu không phải là trang 0 -->
+          <a th:if="${start > 0}"
+             th:href="@{/admin/service-bills(page=0)}"
+             class="page-link"
+             th:text="1">
+          </a>
+          <span th:if="${start > 1}" class="page-link">...</span>
+          
+          <!-- Hiển thị các trang trong khoảng -->
+          <span th:each="i : ${#numbers.sequence(start, end)}">
+            <a th:if="${i != serviceBillPage.number}"
+               th:href="@{/admin/service-bills(page=${i})}"
+               class="page-link"
+               th:text="${i + 1}">
+            </a>
+            <span th:if="${i == serviceBillPage.number}" 
+                  class="page-link active"
+                  th:text="${i + 1}">
+            </span>
+          </span>
+          
+          <!-- Hiển thị dấu ... nếu còn nhiều trang -->
+          <span th:if="${end < serviceBillPage.totalPages - 2}" class="page-link">...</span>
+          
+          <!-- Hiển thị trang cuối cùng nếu không phải là trang cuối -->
+          <a th:if="${end < serviceBillPage.totalPages - 1}"
+             th:href="@{/admin/service-bills(page=${serviceBillPage.totalPages - 1})}"
+             class="page-link"
+             th:text="${serviceBillPage.totalPages}">
+          </a>
+        </span>
+        
+        <a th:if="${serviceBillPage.number < serviceBillPage.totalPages - 1}"
+           th:href="@{/admin/service-bills(page=${serviceBillPage.number + 1})}"
+           class="page-link">
+          <i class="fas fa-chevron-right"></i>
+        </a>
+      </div>
+    </content>
+  </div>
+
+  <style>
+    .total-amount {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .discount-info {
+      font-size: 0.85em;
+      color: #28a745;
+    }
+  </style>
+</body>
+</html> 
